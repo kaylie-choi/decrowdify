@@ -27,7 +27,7 @@ export default async function handle(req, res) {
       res.status(201).json(area);
       break
     default:
-      res.setHeader('Allow', ['GET', 'PUT'])
+      res.setHeader('Allow', ['GET', 'POST'])
       res.status(405).end(`Method ${method} Not Allowed`)
   }
 }

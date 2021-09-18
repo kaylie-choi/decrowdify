@@ -13,7 +13,7 @@ export default async function handle(req, res) {
       location_id = req.query.location_id;
 
       let queryParams = {};
-      if (location_name) {
+      if (location_id) {
         const location = await db.collection("locations").findOne({ _id: ObjectID(location_id) });
         if (!location) {
           res.status(404).end("Location not found");
@@ -24,16 +24,16 @@ export default async function handle(req, res) {
       }
 
       const foundCrowdlevel = await collection
-        .findOne(queryParams)
-        .sort({ createdAt: -1 })
-
-      res.status(200).json(foundCrowdlevel);
+        .find(queryParams)
+        .sort({ createdAt: - 1 })
+        .limit(1)
+        .toArray();
+      res.status(200).json(foundCrowdlevel[0]);
       break;
     case 'POST':
       location_id = req.body.location_id;
       const crowdlevel = req.body.crowdlevel;
 
-      console.log(location_id);
       const location = await db.collection("locations").findOne({ _id: ObjectID(location_id) });
       if (!location) {
         res.status(404).end("Location not found");

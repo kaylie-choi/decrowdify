@@ -1,15 +1,34 @@
 import clientPromise from '../../lib/mongodb'
 
-export default async function handle(_req, res) {
+export default async function handle(req, res) {
   const client = await clientPromise;
   const db = client.db();
+  const collection = db.collection("areas")
 
-  const areas = await db
-    .collection("areas")
-    .find({})
-    .sort({ name: 1 })
-    .toArray();
+  const {
+    body: { name },
+    method,
+  } = req
 
-  res.status(200).json(areas);
+  switch(method) {
+    case 'GET':
+      const areas = await collection 
+        .find({})
+        .sort({ name: 1 })
+        .toArray();
+
+      res.status(200).json(areas);
+      break
+    case 'POST':
+      const area = await collection
+        .insertOne({
+          name: name
+        })
+      res.status(201).json(area);
+      break
+    default:
+      res.setHeader('Allow', ['GET', 'PUT'])
+      res.status(405).end(`Method ${method} Not Allowed`)
+  }
 }
 
